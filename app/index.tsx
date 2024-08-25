@@ -1,14 +1,26 @@
+import { Link } from "expo-router";
 import { useState } from "react";
+import { useSettings } from "@/store/settings";
 import { Pressable, Text } from "react-native";
 import { Alert, SafeAreaView, View } from "react-native";
+
+import Feather from "@expo/vector-icons/Feather";
 
 import * as Haptics from "expo-haptics";
 
 const Home = () => {
   const [count, setCount] = useState(0);
 
+  const settings = useSettings();
+
   return (
-    <SafeAreaView className="flex-1 items-center justify-center">
+    <SafeAreaView className="relative flex-1 items-center justify-center bg-white">
+      <View className="absolute right-5 top-20">
+        <Link href="/settings-modal">
+          <Feather name="settings" size={24} color="black" />
+        </Link>
+      </View>
+
       <View className="items-center">
         <Text
           adjustsFontSizeToFit
@@ -20,7 +32,10 @@ const Home = () => {
 
         <Pressable
           onPress={() => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
+            if (settings.haptics) {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft);
+            }
+
             setCount(count + 1);
           }}
           className="size-40 items-center justify-center rounded-full border-[6px] border-blue-300 bg-blue-400 active:bg-blue-500"
@@ -34,7 +49,12 @@ const Home = () => {
               return;
             }
 
-            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+            if (settings.haptics) {
+              Haptics.notificationAsync(
+                Haptics.NotificationFeedbackType.Warning,
+              );
+            }
+
             Alert.alert(
               "Reset",
               "Are you sure you want to reset the counter?",
@@ -47,9 +67,12 @@ const Home = () => {
                   text: "OK",
                   style: "destructive",
                   onPress: () => {
-                    Haptics.notificationAsync(
-                      Haptics.NotificationFeedbackType.Success,
-                    );
+                    if (settings.haptics) {
+                      Haptics.notificationAsync(
+                        Haptics.NotificationFeedbackType.Success,
+                      );
+                    }
+
                     setCount(0);
                   },
                 },
