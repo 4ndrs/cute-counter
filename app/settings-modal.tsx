@@ -1,7 +1,9 @@
 import { Link } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useSettings } from "@/store/settings";
-import { Switch, Text, View } from "react-native";
+import { Alert, Pressable, Switch, Text, View } from "react-native";
+
+import Divider from "@/components/divider";
 
 const SettingsModal = () => {
   const settings = useSettings();
@@ -19,8 +21,8 @@ const SettingsModal = () => {
 
         <Text className="mb-4 mt-8 text-4xl font-bold">Settings</Text>
 
-        <View className="gap-4">
-          <View className="flex-row items-center justify-between rounded-lg bg-white p-6">
+        <View className="gap-4 rounded-lg bg-white p-6">
+          <View className="flex-row items-center justify-between">
             <Text>Haptics</Text>
             <Switch
               value={settings.haptics}
@@ -28,6 +30,38 @@ const SettingsModal = () => {
               onValueChange={() => settings.toggleHaptics()}
             />
           </View>
+
+          <Divider />
+
+          <Pressable
+            onPress={() => {
+              Alert.prompt(
+                "Daily Goal",
+                "Enter a number",
+                (value) => {
+                  if (value === null) {
+                    return;
+                  }
+
+                  if (isNaN(+value) || +value < 1) {
+                    settings.setDailyGoal(0);
+                    return;
+                  }
+
+                  settings.setDailyGoal(+value);
+                },
+                "plain-text",
+                settings.dailyGoal > 0 ? `${settings.dailyGoal}` : "",
+                "number-pad",
+              );
+            }}
+            className="flex-row items-center justify-between"
+          >
+            <Text>Daily Goal</Text>
+            <Text className="text-gray-500">
+              {settings.dailyGoal === 0 ? "Disabled" : settings.dailyGoal}
+            </Text>
+          </Pressable>
         </View>
       </View>
     </>

@@ -13,6 +13,9 @@ const Home = () => {
 
   const settings = useSettings();
 
+  const dailyGoalReached =
+    settings.dailyGoal !== 0 && count >= settings.dailyGoal;
+
   return (
     <SafeAreaView className="relative flex-1 items-center justify-center bg-white">
       <View className="absolute right-5 top-20">
@@ -20,6 +23,10 @@ const Home = () => {
           <Feather name="settings" size={24} color="black" />
         </Link>
       </View>
+
+      {dailyGoalReached && (
+        <Text className="absolute top-56 text-lg">Daily goal reached! 🎉</Text>
+      )}
 
       <View className="items-center">
         <Text
